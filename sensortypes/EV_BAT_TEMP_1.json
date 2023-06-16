@@ -1,0 +1,59 @@
+{
+  "docType": "SensorType",
+  "charCode":"EV_BAT_TEMP_1",
+  "charting":true,
+  "display":true,
+  "enabled":true,
+  "gasStatsSupported":false,
+  "label":"HV Bat Temp",
+  "description": "High Voltage Battery Temperature (several locations in each pack)",
+  "rangeHint":{"_max":55.0,"_min":-10,"_step":0.5},
+  "rank":100.0,
+  "sensorColor":"0x378b86",
+  "sensorGasFormula":"",
+  "sensorTypeIntelligence":{
+    "binsInfo":[{
+        "max":-10.0,
+        "min":-25.0,
+        "recommendation": "At this temperature, capacity is reduced to approximately 40-60% of normal range",
+        "strokeStyle":"red"
+      },{
+        "max":0.0,
+        "min":-10.0,
+        "recommendation":"At this temperature, capacity is reduced to approximately 60-80% of normal range",
+        "strokeStyle":"orange"
+      },{
+        "max":10.0,
+        "min":0.0,
+        "recommendation":"At this temperature, capacity is reduced to approximately 80-100% of normal range",
+        "strokeStyle":"yellow"
+      },{
+        "max":32.0,
+        "min":10.0,
+        "recommendation":"Ideal operating range for EV packs",
+        "strokeStyle":"green"
+      },{
+        "max":40.0,
+        "min":32.0,
+        "recommendation":"At this temperature, capacity is reduced to approximately 80-100% of normal range",
+        "strokeStyle":"yellow"
+      },{
+        "max":45.0,
+        "min":40.0,
+        "recommendation":"At this temperature, capacity is likely dramatically reduced",
+        "strokeStyle":"orange"
+      },{
+        "max":55.0,
+        "min":45.0,
+        "recommendation":"At this temperature, capacity is likely dramatically reduced and may severely degrade the battery and is potentially hazardous",
+        "strokeStyle":"red"
+      }
+    ],
+    "citationUrls":
+    [
+      "https://www.geotab.com/blog/ev-range/"
+    ]
+  },
+  "typeByte":520,
+  "units":"°C"
+}

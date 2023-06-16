@@ -1,0 +1,34 @@
+{
+  "docType": "SensorType",
+  "charCode":"EV_BAT_SOC",
+  "charting":true,
+  "display":true,
+  "enabled":true,
+  "gasStatsSupported":false,
+  "label":"HV Bat State of Charge",
+  "description": "State of charge (SOC) of the High Voltage Battery",
+  "rangeHint":{"_max":100,"_min":0,"_step":1},
+  "rank":100.0,
+  "sensorColor":"0x0f7f79",
+  "sensorGasFormula":"",
+  "sensorTypeIntelligence":{
+    "binsInfo":[{
+        "max":30.0,
+        "min":0.0,
+        "strokeStyle":"red"
+      },{
+        "max":60.0,
+        "min":30.0,
+        "recommendation":"",
+        "strokeStyle":"yellow"
+      },{
+        "max":100.0,
+        "min":60.0,
+        "recommendation":"",
+        "strokeStyle":"green"
+      }
+    ]
+  },
+  "typeByte":514,
+  "units":"%"
+}

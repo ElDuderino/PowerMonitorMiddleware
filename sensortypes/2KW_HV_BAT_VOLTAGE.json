@@ -1,0 +1,44 @@
+{
+  "docType": "SensorType",
+  "charCode":"2KW_HV_BAT_VOLTAGE",
+  "charting":true,
+  "display":true,
+  "enabled":true,
+  "gasStatsSupported":false,
+  "label":"2KW BESS HV Bat Voltage",
+  "description": "2KW pack High Voltage Battery Voltage. 14 cells that should each be charged to an absolute maximum of approx 4.135V (or less depending on the generation)",
+  "rangeHint":{"_max":62.0,"_min":0,"_step":1},
+  "rank":100.0,
+  "sensorColor":"0x2e8a85",
+  "sensorGasFormula":"",
+  "sensorTypeIntelligence":{
+    "binsInfo":[{
+        "max":35,
+        "min":0.0,
+        "strokeStyle":"red"
+      },{
+        "max":44.0,
+        "min":35.0,
+        "recommendation":"",
+        "strokeStyle":"yellow"
+      },{
+        "max":44.0,
+        "min":57.4,
+        "recommendation":"",
+        "strokeStyle":"green"
+      },{
+        "max":59.0,
+        "min":57.4,
+        "recommendation":"",
+        "strokeStyle":"yellow"
+      },{
+        "max":62.0,
+        "min":59.0,
+        "recommendation":"",
+        "strokeStyle":"red"
+      }
+    ]
+  },
+  "typeByte":532,
+  "units":"V"
+}

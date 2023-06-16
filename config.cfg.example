@@ -1,0 +1,26 @@
+[DEFAULT]
+# if you want to override the mac for one device, do so here
+self_mac = changeme
+
+# rest API parameters
+API_URL=https://iot.aretas.ca/rest/
+
+API_USERNAME = username
+API_PASSWORD = password
+
+[API]
+batch_mode = True
+
+# the API reporting interval
+# even if we get packets more frequently, we only send once every
+# report_interval milliseconds
+# e.g. 20000 ms (20 seconds)
+report_interval = 20000
+
+[SERIAL]
+serial_port = COM12
+# the BMS sampling interval
+# this can be shorter than the reporting interval since we may want to 
+# have a higher local sampling rate when we add in our local rest API / redis time series stuff
+# e.g. 5000 ms (5 seconds)
+sample_interval = 5000
