@@ -33,10 +33,6 @@ class MessageHarvester(Thread):
                 self.api_sender.join(1000)
                 break
 
-            payload = self.payload_queue.get()
-            sensor_message_item = SensorMessageItem(mac=payload['mac'],
-                                                    sensor_type=payload['type'],
-                                                    timestamp=payload['timestamp'],
-                                                    payload_data=payload['data'])
+            sensor_message_item = self.payload_queue.get()
 
             self.api_sender.enqueue_msg(sensor_message_item)

@@ -1,4 +1,6 @@
 {
+  "_id": "8cad84763ebf70b28949a7b83801551b",
+  "_rev": "1-4a8c0ba75036d261c1f3a3a172ebc726",
   "docType": "SensorType",
   "charCode":"2KW_BAT_AHR",
   "charting":true,
@@ -9,12 +11,13 @@
   "description": "2KW Capacity of HV Battery in Amp Hours",
   "rangeHint":{"_max":70,"_min":0,"step":1},
   "rank":100.0,
-  "sensorColor":"0x15837d",
+  "sensorColor":"0xC45AB3",
   "sensorGasFormula":"",
   "sensorTypeIntelligence":{
     "binsInfo":[{
         "max":30.0,
         "min":0.0,
+        "recommendation":"",
         "strokeStyle":"red"
       },{
         "max":60.0,

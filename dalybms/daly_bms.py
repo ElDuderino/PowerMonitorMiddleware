@@ -5,8 +5,10 @@ import math
 import logging
 
 from .error_codes import ERROR_CODES
+
+
 class DalyBMS:
-    def __init__(self, request_retries=3, address=4, logger=None):
+    def __init__(self, request_retries=3, address=8, device='/dev/ttyUSB0'):
         """
 
         :param request_retries: How often read requests should get repeated in case that they fail (Default: 3).
@@ -14,19 +16,11 @@ class DalyBMS:
         :param logger: Python Logger object for output (Default: None)
         """
         self.status = None
-        if logger:
-            self.logger = logger
-        else:
-            self.logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger(__name__)
+
         self.request_retries = request_retries
         self.address = address  # 4 = USB, 8 = Bluetooth
 
-    def connect(self, device):
-        """
-        Connect to a serial device
-
-        :param device: Serial device, e.g. /dev/ttyUSB0
-        """
         self.serial = serial.Serial(
             port=device,
             baudrate=9600,
@@ -37,6 +31,12 @@ class DalyBMS:
             xonxoff=False,
             writeTimeout=0.5
         )
+
+        self.logger.info("Serial port status:{}".format(self.serial.is_open))
+
+    def connect(self):
+        """
+        """
         self.get_status()
 
     def disconnect(self):
@@ -215,6 +215,7 @@ class DalyBMS:
         if not response_data:
             response_data = self._read_request("94")
         if not response_data:
+            self.logger.error("Could not get status response!")
             return False
 
         parts = struct.unpack('>b b ? ? b h x', response_data)
@@ -252,7 +253,7 @@ class DalyBMS:
             elif status_field == 'temperatures':
                 max_responses = 3
             else:
-                self.logger.error("unkonwn status_field %s" % status_field)
+                self.logger.error("unknown status_field %s" % status_field)
                 return False
         else:
             # via UART/USB the BMS returns only frames that have data
@@ -376,13 +377,11 @@ class DalyBMS:
         # off response
         # 0001000002006c44
 
-
     # Set SoC. Value is float from 0.0 to 100.0
     def set_soc(self, value):
-        v = round(value*10.0)
-        if v > 1000 : v = 1000
-        if v < 0 : v = 0
-        extra='000000000000%0.4X' % v
+        v = round(value * 10.0)
+        if v > 1000: v = 1000
+        if v < 0: v = 0
+        extra = '000000000000%0.4X' % v
         response_data = self._read_request("21", extra=extra)
         self.logger.info(response_data.hex())
-        

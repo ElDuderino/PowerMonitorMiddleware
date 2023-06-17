@@ -34,8 +34,8 @@ class SerialPortReadWriter(Thread):
 
         self.sig_event = sig_event
 
-        self.daly_ = DalyBMS(3)
-        self.daly_.connect(self.serial_port)
+        self.daly_ = DalyBMS(request_retries=3, address=8, device=self.serial_port)
+        self.daly_.connect()
 
     def run(self):
         # enqueue bytes into the self.message_queue
@@ -81,10 +81,15 @@ class SerialPortReadWriter(Thread):
         #    self.payload_queue.put(payload)
 
         params = self.daly_.get_all()
-        payload_items = self.decode_daly_msg(params)
-        for item in payload_items:
-            self.payload_queue.put(item)
-        self.logger.info("Enqueued {} items".format(len(payload_items)))
+
+        if params is not None:
+
+            payload_items = self.decode_daly_msg(params)
+            for item in payload_items:
+                self.payload_queue.put(item)
+            self.logger.info("Enqueued {} items".format(len(payload_items)))
+        else:
+            self.logger.error("Could not fetch BMS params")
 
     def decode_daly_msg(self, params: dict) -> list:
 
@@ -92,31 +97,41 @@ class SerialPortReadWriter(Thread):
 
         now = AretasUtils.now_ms()
 
-        if 'soc' in params.keys():
+        self.logger.info("Decoding params:{}".format(params))
 
-            voltage = params['soc']['total_voltage']
-            current = params['soc']['current']
-            soc = params['soc']['soc_percent']
+        try:
 
-            msg_voltage = SensorMessageItem(self.mac, 532, float(voltage), now)
-            ret.append(msg_voltage)
+            if 'soc' in params.keys():
 
-            msg_current = SensorMessageItem(self.mac, 531, float(current), now)
-            ret.append(msg_current)
+                voltage = params['soc']['total_voltage']
+                current = params['soc']['current']
+                soc = params['soc']['soc_percent']
 
-            msg_soc = SensorMessageItem(self.mac, 514, float(soc), now)
-            ret.append(msg_soc)
+                msg_voltage = SensorMessageItem(self.mac, 532, float(voltage), now)
+                ret.append(msg_voltage)
 
-        if 'temperatures' in params.keys():
-            temperature = params['temperatures']['1']
+                msg_current = SensorMessageItem(self.mac, 531, float(current), now)
+                ret.append(msg_current)
 
-            msg_temperature = SensorMessageItem(self.mac, 520, float(temperature), now)
-            ret.append(msg_temperature)
+                msg_soc = SensorMessageItem(self.mac, 514, float(soc), now)
+                ret.append(msg_soc)
 
-        if 'mosfet_status' in params.keys():
-            capacity_ah = params['mosfet_status']['capacity_ah']
+            if 'temperatures' in params.keys() and params['temperatures'] is not None:
+                temperature = params['temperatures'][1]
 
-            msg_ahr = SensorMessageItem(self.mac, 530, float(capacity_ah), now)
-            ret.append(msg_ahr)
+                msg_temperature = SensorMessageItem(self.mac, 520, float(temperature), now)
+                ret.append(msg_temperature)
+
+            if 'mosfet_status' in params.keys():
+                capacity_ah = params['mosfet_status']['capacity_ah']
+
+                msg_ahr = SensorMessageItem(self.mac, 530, float(capacity_ah), now)
+                ret.append(msg_ahr)
+
+        except Exception as e:
+
+            self.logger.error("Unknown exception trying to decode BMS params:{}".format(e))
+
+            pass
 
         return ret

@@ -1,4 +1,6 @@
 {
+  "_id": "8cad84763ebf70b28949a7b83801519b",
+  "_rev": "1-4a8c0ba75036d261c1f3a3a172ebc726",
   "docType": "SensorType",
   "charCode":"2KW_HV_BAT_CURRENT",
   "charting":true,
@@ -9,12 +11,13 @@
   "description": "High Voltage battery current; Negative when being used, positive when being charged",
   "rangeHint":{"_max":100,"_min":0,"_step":1},
   "rank":100.0,
-  "sensorColor":"0x1d8680",
+  "sensorColor":"0x631A86",
   "sensorGasFormula":"",
   "sensorTypeIntelligence":{
     "binsInfo":[{
         "max":30.0,
         "min":0.0,
+        "recommendation": "",
         "strokeStyle":"green"
       },{
         "max":60.0,

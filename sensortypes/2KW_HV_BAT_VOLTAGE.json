@@ -1,4 +1,6 @@
 {
+  "_id": "8cad84763ebf70b28949a7b83801425b",
+  "_rev": "1-fc228abd235561849f8bad480928e47a",
   "docType": "SensorType",
   "charCode":"2KW_HV_BAT_VOLTAGE",
   "charting":true,
@@ -9,7 +11,7 @@
   "description": "2KW pack High Voltage Battery Voltage. 14 cells that should each be charged to an absolute maximum of approx 4.135V (or less depending on the generation)",
   "rangeHint":{"_max":62.0,"_min":0,"_step":1},
   "rank":100.0,
-  "sensorColor":"0x2e8a85",
+  "sensorColor":"0xF49390",
   "sensorGasFormula":"",
   "sensorTypeIntelligence":{
     "binsInfo":[{
