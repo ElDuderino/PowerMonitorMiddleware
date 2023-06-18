@@ -106,12 +106,17 @@ class SerialPortReadWriter(Thread):
                 voltage = params['soc']['total_voltage']
                 current = params['soc']['current']
                 soc = params['soc']['soc_percent']
+                # compute power for energy consumption calculations
+                kw = (float(voltage) * float(current))/1000
 
                 msg_voltage = SensorMessageItem(self.mac, 532, float(voltage), now)
                 ret.append(msg_voltage)
 
                 msg_current = SensorMessageItem(self.mac, 531, float(current), now)
                 ret.append(msg_current)
+
+                msg_kw = SensorMessageItem(self.mac, 533, kw, now)
+                ret.append(msg_kw)
 
                 msg_soc = SensorMessageItem(self.mac, 514, float(soc), now)
                 ret.append(msg_soc)

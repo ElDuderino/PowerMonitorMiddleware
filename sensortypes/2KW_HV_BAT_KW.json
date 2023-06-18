@@ -1,62 +1,62 @@
 {
-  "_id": "8cad84763ebf70b28949a7b83801519b",
-  "_rev": "3-1025177f0f9c7ddea3a102c3135b73fe",
+  "_id": "8cad84763ebf70b28949a7b8380175a9",
+  "_rev": "1-634021d9a07c638beb0ade3728599fca",
   "docType": "SensorType",
-  "charCode": "2KW_HV_BAT_CURRENT",
+  "charCode": "2KW_HV_BAT_KW",
   "charting": true,
   "display": true,
   "enabled": true,
   "gasStatsSupported": false,
-  "label": "2KW HV Bat Current",
-  "description": "High Voltage battery current; Negative when being used, positive when being charged",
+  "label": "2KW BESS HV Bat KW",
+  "description": "2KW BESS instantaneous power",
   "rangeHint": {
-    "_max": 100,
-    "_min": 0,
+    "_max": 5.7,
+    "_min": -5.7,
     "_step": 1
   },
   "rank": 100,
-  "sensorColor": "0x631A86",
+  "sensorColor": "0xF49390",
   "sensorGasFormula": "",
   "sensorTypeIntelligence": {
     "binsInfo": [
       {
-        "max": -60,
-        "min": -100,
+        "max": -3.3,
+        "min": -5.7,
         "recommendation": "",
         "strokeStyle": "red"
       },
       {
-        "max": -30,
-        "min": -60,
+        "max": -1.65,
+        "min": -3.3,
         "recommendation": "",
         "strokeStyle": "yellow"
       },
       {
         "max": 0,
-        "min": -30,
+        "min": -1.65,
         "recommendation": "",
         "strokeStyle": "green"
       },
       {
-        "max": 30,
+        "max": 1.65,
         "min": 0,
         "recommendation": "",
         "strokeStyle": "green"
       },
       {
-        "max": 60,
-        "min": 30,
+        "max": 3.3,
+        "min": 1.65,
         "recommendation": "",
         "strokeStyle": "yellow"
       },
       {
-        "max": 100,
-        "min": 60,
+        "max": 5.7,
+        "min": 3.3,
         "recommendation": "",
         "strokeStyle": "red"
       }
     ]
   },
-  "typeByte": 531,
-  "units": "A"
+  "typeByte": 533,
+  "units": "KW"
 }
