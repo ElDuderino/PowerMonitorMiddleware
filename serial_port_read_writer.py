@@ -4,7 +4,6 @@ from multiprocessing import Event
 from queue import Queue
 from threading import Thread
 from time import time
-import serial
 from AretasPythonAPI.utils import Utils as AretasUtils
 from dalybms import DalyBMS
 from sensor_message_item import SensorMessageItem
