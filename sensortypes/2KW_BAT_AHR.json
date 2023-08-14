@@ -1,6 +1,4 @@
 {
-  "_id": "8cad84763ebf70b28949a7b83801551b",
-  "_rev": "1-4a8c0ba75036d261c1f3a3a172ebc726",
   "docType": "SensorType",
   "charCode":"2KW_BAT_AHR",
   "charting":true,

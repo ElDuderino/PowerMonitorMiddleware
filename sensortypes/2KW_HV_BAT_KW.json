@@ -1,13 +1,11 @@
 {
-  "_id": "8cad84763ebf70b28949a7b8380175a9",
-  "_rev": "1-634021d9a07c638beb0ade3728599fca",
   "docType": "SensorType",
   "charCode": "2KW_HV_BAT_KW",
   "charting": true,
   "display": true,
   "enabled": true,
   "gasStatsSupported": false,
-  "label": "2KW BESS HV Bat KW",
+  "label": "2KW BESS Power",
   "description": "2KW BESS instantaneous power",
   "rangeHint": {
     "_max": 5.7,
@@ -58,5 +56,5 @@
     ]
   },
   "typeByte": 533,
-  "units": "KW"
+  "units": "kW"
 }
