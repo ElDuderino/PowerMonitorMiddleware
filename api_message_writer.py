@@ -1,5 +1,3 @@
-import configparser
-from queue import Queue
 from threading import Thread, Event
 
 import urllib3

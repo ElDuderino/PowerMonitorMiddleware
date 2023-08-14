@@ -16,9 +16,7 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-
     import signal
-    import sys
 
     # read in the global app config
     config = configparser.ConfigParser()
@@ -26,6 +24,7 @@ if __name__ == "__main__":
 
     # this is a shared event handler among all the threads
     thread_sig_event = Event()
+
 
     def signal_handler(sig, frame):
         print('You pressed Ctrl+C!')
