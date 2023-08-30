@@ -1,3 +1,6 @@
 [submodule "AretasPythonAPI"]
 	path = AretasPythonAPI
 	url = https://github.com/AretasSensorNetworks/AretasPythonAPI.git
+[submodule "XDM1041Python"]
+	path = XDM1041Python
+	url = https://github.com/ElDuderino/XDM1041Python

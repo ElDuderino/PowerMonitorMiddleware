@@ -5,6 +5,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from message_harvester import MessageHarvester
 from serial_port_read_writer import SerialPortReadWriter
+from XDM1041Python.xdm1041main import *
 
 # An example of using logging.basicConfig rather than logging.fileHandler()
 logging.basicConfig(level=logging.INFO,
@@ -27,10 +28,10 @@ if __name__ == "__main__":
 
 
     def signal_handler(sig, frame):
+        import sys
         print('You pressed Ctrl+C!')
         thread_sig_event.set()
         sys.exit(0)
-
 
     # define the signal handler for SIGINT
     signal.signal(signal.SIGINT, signal_handler)
