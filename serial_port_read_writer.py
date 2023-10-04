@@ -38,6 +38,7 @@ class SerialPortReadWriter(Thread):
         self.daly_ = DalyBMS(request_retries=3, address=8, device=self.serial_port)
         self.daly_.connect()
 
+        # current measurement via XDM
         self._xdm_current_device = None
         self._xdm_current_enabled = config.getboolean("XDM", "xdm_current_enable")
         self._xdm_shunt_resistance = config.getfloat("XDM", "xdm_shunt_resistance")
@@ -49,6 +50,17 @@ class SerialPortReadWriter(Thread):
             self._xdm_current_device = XDM1041(XDM1041Mode.MODE_VOLTAGE_DC, 1, xdm_serial_port)
             self.logger.info("Initializing XDM Meter for Current Measurement")
             self.logger.info(self._xdm_current_device.test_conn())
+
+        # voltage measurement via XDM
+        self._xdm_voltage_device = None
+        self._xdm_voltage_enabled = config.getboolean("XDM", "xdm_voltage_enable")
+
+        if self._xdm_voltage_enabled:
+            xdm_serial_port_v = config.get("XDM", "xdm_voltage_port")
+            # initialize the XDM device to use voltage mode since we're measuring the voltage across the shunt
+            self._xdm_voltage_device = XDM1041(XDM1041Mode.MODE_VOLTAGE_DC, 5, xdm_serial_port_v)
+            self.logger.info("Initializing XDM Meter for Voltage Measurement")
+            self.logger.info(self._xdm_voltage_device.test_conn())
 
     def run(self):
         # enqueue bytes into the self.message_queue
@@ -89,12 +101,15 @@ class SerialPortReadWriter(Thread):
 
         If enabled, read the XDM instrument to get current and replace the Daly BMS value
 
+        If enabled, read the XDM instrument to get voltage and replace the Daly BMS value
+
         @return:
         """
 
         params = self.daly_.get_all()
 
         xdm_current_meas = None
+        xdm_voltage_meas = None
 
         if self._xdm_current_enabled and (self._xdm_current_device is not None):
             xdm_voltage = self._xdm_current_device.read_val1_raw()
@@ -103,19 +118,30 @@ class SerialPortReadWriter(Thread):
             if self._xdm_reverse_current_polarity:
                 xdm_current_meas = xdm_current_meas * -1.0
 
+        if self._xdm_voltage_enabled and (self._xdm_voltage_device is not None):
+            xdm_voltage_meas = self._xdm_voltage_device.read_val1_raw()
+
         if params is not None:
 
             payload_items = self.decode_daly_msg(params)
             for item in payload_items:
 
-                # if xdm is enabled, replace the value with the XDM calculated current measurement
+                # if xdm *current* is enabled, replace the value with the XDM calculated current measurement
                 if item.get_type() == 531 and xdm_current_meas is not None:
                     self.logger.info(
                         "Replacing Daly current value:{} with XDM value:{}".format(item.get_data(), xdm_current_meas)
                     )
                     item.set_data(xdm_current_meas)
 
+                # if xdm *voltage* is enabled, replace the value with the XDM calculated voltage measurement
+                if item.get_type() == 532 and xdm_voltage_meas is not None:
+                    self.logger.info(
+                        "Replacing Daly voltage value:{} with XDM value:{}".format(item.get_data(), xdm_voltage_meas)
+                    )
+                    item.set_data(xdm_voltage_meas)
+
                 self.payload_queue.put(item)
+
             self.logger.info("Enqueued {} items".format(len(payload_items)))
         else:
             self.logger.error("Could not fetch BMS params")
