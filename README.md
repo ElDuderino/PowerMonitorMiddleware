@@ -1,18 +1,14 @@
-# BESSMiddleware
+# PowerMonitorMiddleware
 
-First, take note that this code/branch is in pre-release and may not function correctly or at all until first release. 
+Since we can't fork our own repos, this is an import / copy of the BESSMiddleware (https://github.com/ElDuderino/BESSMiddleware) project that uses Daly BMS and optional dual XDM1041 meters for high precision current / voltage.
 
-The objective of this middleware will be to read critical parameters from a battery energy storage system and send the data to Aretas IoT cloud platform. 
+This version will ONLY read in the XDM1041 parameters and send them to the cloud. 
 
-The test system is a 2kW BESS with Daly BMS and Leaf cells in a 14S config. We refer to the 14S pack as HV Batt. So HV Batt Voltage and HV Batt Current measure
-the whole system voltage and current ingress / egress. Measurement parameters include:
-
-1. HV Batt Voltage
-2. HV Batt Current (Charge / Discharge)
-3. Temperatures (pack and environment)
-4. Cell Voltages
-5. State of charge
-6. Statuses (charging, load, etc)
-7. Capacity (Ah)
+We'll output:
+ * Current
+ * Voltage
+ * kWh
+You could therefore use this package with the original BESSMiddleware (or any other middleware) but just disable the other middleware from outputting Current, Voltage and kWh
 
 You must install the AretasPythonAPI from https://github.com/AretasSensorNetworks/AretasPythonAPI
+You must also install the XDM1041 Driver from https://github.com/ElDuderino/XDM1041Python
