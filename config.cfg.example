@@ -18,15 +18,19 @@ batch_mode = True
 report_interval = 20000
 
 [SERIAL]
-serial_port = COM12
-# the BMS sampling interval
-# this can be shorter than the reporting interval since we may want to 
+# the XDM sampling interval
+# this can be shorter than the reporting interval since we may want to
 # have a higher local sampling rate when we add in our local rest API / redis time series stuff
 # e.g. 5000 ms (5 seconds)
 sample_interval = 5000
 
 [XDM]
+# parameters for current measurement via shunt
 xdm_current_enable = True
-xdm_current_port = COM39
-xdm_shunt_resistance = 0.000333333333
+xdm_current_port = /dev/ttyUSB1
+xdm_shunt_resistance = 0.0006667
 xdm_current_reverse_polarity = True
+
+# parameters for VBATT measurement
+xdm_voltage_enable = True
+xdm_voltage_port = /dev/ttyUSB2

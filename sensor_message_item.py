@@ -15,6 +15,15 @@ class SensorMessageItem:
         self._data = payload_data
         pass
 
+    def __repr__(self):
+        return("{{ sensor_type:{}, mac:{}, timestamp:{}, data:{} sent:{} }}".format(
+            self._type,
+            self._mac,
+            self._timestamp,
+            self._data,
+            self._sent
+        ))
+
     def get_type(self) -> int:
         return self._type
 

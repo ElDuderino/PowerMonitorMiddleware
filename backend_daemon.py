@@ -8,9 +8,9 @@ from serial_port_read_writer import SerialPortReadWriter
 from XDM1041Python.xdm1041main import *
 
 # An example of using logging.basicConfig rather than logging.fileHandler()
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     handlers=[
-                        RotatingFileHandler("BESSMiddleware.log", maxBytes=50000000, backupCount=5)
+                        RotatingFileHandler("PowerMonitorMiddleware.log", maxBytes=50000000, backupCount=5)
                     ],
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
