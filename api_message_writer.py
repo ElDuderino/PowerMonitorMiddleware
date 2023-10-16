@@ -1,3 +1,4 @@
+import time
 from threading import Thread, Event
 
 import urllib3
@@ -14,8 +15,11 @@ class APIMessageWriter(Thread):
     This class writes the data to API
     inject data into this class by enqueue_msg
     Create an instance of this Thread and run it
-    The data will be sent every report_interval milliseconds as specified in the config
+    Data will be sent every report_interval milliseconds as specified in the config
+    This means that any new data arriving before the interval elapsed will overwrite what's
+    sitting in the local buffer
     """
+
     def __init__(self, sig_event: Event):
 
         super(APIMessageWriter, self).__init__()
@@ -36,6 +40,9 @@ class APIMessageWriter(Thread):
 
         # a hashmap of sensor messages we want to send to the API
         self.to_send: dict([int, SensorMessageItem]) = dict()
+
+        self.thread_sleep = config.getboolean('DEFAULT', 'thread_sleep')
+        self.thread_sleep_time = config.getfloat('DEFAULT', 'thread_sleep_time')
 
         self.is_sending = False
 
@@ -73,11 +80,15 @@ class APIMessageWriter(Thread):
 
             # determine if the polling interval has elapsed
             if (now_ - self.last_message_time) >= self.polling_interval:
-                self.logger.info("Sending {} messages to API".format(len(self.to_send)))
+                n_send = len(list(filter(lambda x: x.get_is_sent() is False, self.to_send.values())))
+                self.logger.info("Sending {} messages to API".format(n_send))
                 self.last_message_time = now_
                 # use the apiwriter
                 self.is_sending = True
-                # @TODO: change this to batch mode
+
+                # gather the items for the batch send
+                to_send_items = []
+
                 for key, message in self.to_send.items():
                     # if it hasn't been previously sent, then send it
                     if not message.get_is_sent():
@@ -87,30 +98,52 @@ class APIMessageWriter(Thread):
                             'timestamp': message.get_timestamp(),
                             'data': message.get_data()
                         }
-                        try:
-                            # we're using the token self-management function
-                            err = self.api_writer.send_datum_auth_check(datum)
-                            if err is False:
-                                self.logger.error("Error sending messages, aborting rest")
-                                break
-                            else:
-                                message.set_is_sent(True)
+                        to_send_items.append(datum)
 
-                        except urllib3.exceptions.ReadTimeoutError as rte:
-                            self.logger.error("Read timeout error from urllib3:{}".format(rte))
-                            # we break because there's no point in trying to send the rest of the messages,
-                            # we can wait until next interval
-                            break
-                        except requests.exceptions.ReadTimeout as rt:
-                            self.logger.error("Read timeout error from requests:{}".format(rt))
-                            pass
-                        except requests.exceptions.ConnectTimeout as cte:
-                            self.logger.error("Connection timeout error sending messages to API:{}".format(cte))
-                        # we need to be fairly aggressive with exception handling as we are in a thread
-                        # doing network stuff and network things are buggy as heck
-                        except Exception as e:
-                            self.logger.error("Unknown exception trying to send messages to API:{}".format(e))
-                            pass
+                # send as a batch then if sent, mark all as sent
+                if len(to_send_items) > 0:
+                    send_status = self.send_batch_to_api(to_send_items)
+                    if send_status is True:
+                        for key, message in self.to_send.items():
+                            message.set_is_sent(True)
+
+                else:
+                    if self.thread_sleep is True:
+                        time.sleep(self.thread_sleep_time)
 
                 self.is_sending = False
-                pass
+
+    def send_batch_to_api(self, batch: list[dict]) -> bool:
+        """
+        Send a batch of messages to the API
+        If sending is successful, set_is_sent to True
+        """
+        try:
+            # we're using the token self-management function
+            err = self.api_writer.send_data(batch, True)
+            if err is False:
+                self.logger.error("Error sending messages, aborting rest")
+                return False
+            else:
+                return True
+
+        except urllib3.exceptions.ReadTimeoutError as rte:
+            '''
+            There are a lot of things we need to handle in stateless HTTP land without
+            aborting the thread
+            '''
+            self.logger.error("Read timeout error from urllib3:{}".format(rte))
+            # we break because there's no point in trying to send the rest of the messages,
+            # we can wait until next interval
+            return False
+        except requests.exceptions.ReadTimeout as rt:
+            self.logger.error("Read timeout error from requests:{}".format(rt))
+            return False
+        except requests.exceptions.ConnectTimeout as cte:
+            self.logger.error("Connection timeout error sending messages to API:{}".format(cte))
+            return False
+        # we need to be fairly aggressive with exception handling as we are in a thread
+        # doing network stuff and network things are buggy as heck
+        except Exception as e:
+            self.logger.error("Unknown exception trying to send messages to API:{}".format(e))
+            return False

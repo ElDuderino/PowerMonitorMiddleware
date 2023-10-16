@@ -29,6 +29,8 @@ class SerialPortReadWriter(Thread):
         self.sample_interval = int(config['SERIAL']['sample_interval'])
         self.last_sampled = 0
 
+        self.thread_sleep = config.getboolean('DEFAULT', 'thread_sleep')
+
         self.payload_queue = payload_queue
 
         self.sig_event = sig_event
@@ -71,6 +73,8 @@ class SerialPortReadWriter(Thread):
                 if (now_ms - self.last_sampled) > self.sample_interval:
                     self.read_port()
                     self.last_sampled = now_ms
+                else:
+                    time.sleep(0.05)
 
                 if self.sig_event.is_set():
                     self.logger.info("Exiting {}".format(

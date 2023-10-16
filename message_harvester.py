@@ -2,9 +2,9 @@ import logging
 from multiprocessing import Event
 from queue import Queue, Empty
 from threading import Thread
-
+import configparser
 from api_message_writer import APIMessageWriter
-from sensor_message_item import SensorMessageItem
+import time
 
 
 class MessageHarvester(Thread):
@@ -15,11 +15,18 @@ class MessageHarvester(Thread):
     def __init__(self, payload_queue: Queue, sig_event: Event):
         super(MessageHarvester, self).__init__()
 
+        # read in the global app config
+        config = configparser.ConfigParser()
+        config.read('config.cfg')
+
         self.logger = logging.getLogger(__name__)
         self.logger.info("Init MessageHarvester")
         self.sig_event = sig_event
 
         self.payload_queue = payload_queue
+
+        self.thread_sleep = config.getboolean('DEFAULT', 'thread_sleep')
+        self.thread_sleep_time = config.getfloat('DEFAULT', 'thread_sleep_time')
 
         self.api_sender = APIMessageWriter(sig_event)
         self.api_sender.start()
@@ -36,3 +43,6 @@ class MessageHarvester(Thread):
             sensor_message_item = self.payload_queue.get()
 
             self.api_sender.enqueue_msg(sensor_message_item)
+
+            if self.thread_sleep is True:
+                time.sleep(self.thread_sleep_time)
