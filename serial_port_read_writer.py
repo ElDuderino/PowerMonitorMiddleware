@@ -130,11 +130,17 @@ class SerialPortReadWriter(Thread):
         # I'm going to keep things similar though so we can still have the flexibility of
         # supporting one, both or none :D
         if self._xdm_current_enabled and (self._xdm_current_device is not None):
-            xdm_voltage = self._xdm_current_device.read_val1_raw()
-            # apply I = V / R
-            xdm_current_meas = xdm_voltage / self._xdm_shunt_resistance
-            if self._xdm_reverse_current_polarity:
-                xdm_current_meas = xdm_current_meas * -1.0
+            
+            try:
+
+                xdm_voltage = self._xdm_current_device.read_val1_raw()
+                # apply I = V / R
+                xdm_current_meas = xdm_voltage / self._xdm_shunt_resistance
+                if self._xdm_reverse_current_polarity:
+                    xdm_current_meas = xdm_current_meas * -1.0
+
+            except ValueError as ve:
+                self.logger.error("Error reading XDM current device:{}".format(ve))
 
         if self._xdm_voltage_enabled and (self._xdm_voltage_device is not None):
             xdm_voltage_meas = self._xdm_voltage_device.read_val1_raw()

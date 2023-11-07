@@ -98,6 +98,7 @@ class APIMessageWriter(Thread):
                             'timestamp': message.get_timestamp(),
                             'data': message.get_data()
                         }
+
                         to_send_items.append(datum)
 
                 # send as a batch then if sent, mark all as sent
@@ -136,12 +137,15 @@ class APIMessageWriter(Thread):
             # we break because there's no point in trying to send the rest of the messages,
             # we can wait until next interval
             return False
+
         except requests.exceptions.ReadTimeout as rt:
             self.logger.error("Read timeout error from requests:{}".format(rt))
             return False
+
         except requests.exceptions.ConnectTimeout as cte:
             self.logger.error("Connection timeout error sending messages to API:{}".format(cte))
             return False
+
         # we need to be fairly aggressive with exception handling as we are in a thread
         # doing network stuff and network things are buggy as heck
         except Exception as e:

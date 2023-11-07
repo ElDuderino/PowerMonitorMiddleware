@@ -9,8 +9,6 @@ API_USERNAME = username
 API_PASSWORD = password
 
 [API]
-batch_mode = True
-
 # the API reporting interval
 # even if we get packets more frequently, we only send once every
 # report_interval milliseconds
