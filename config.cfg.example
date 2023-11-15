@@ -32,3 +32,8 @@ xdm_current_reverse_polarity = True
 # parameters for VBATT measurement
 xdm_voltage_enable = True
 xdm_voltage_port = /dev/ttyUSB2
+
+[REDIS]
+enable_redis = True
+auth_redis = True
+auth_pw = X3qhxC82

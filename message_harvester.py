@@ -6,6 +6,8 @@ import configparser
 from api_message_writer import APIMessageWriter
 import time
 
+from redis_message_processor import RedisQueueReader
+
 
 class MessageHarvester(Thread):
     """
@@ -28,8 +30,16 @@ class MessageHarvester(Thread):
         self.thread_sleep = config.getboolean('DEFAULT', 'thread_sleep')
         self.thread_sleep_time = config.getfloat('DEFAULT', 'thread_sleep_time')
 
+        self.enable_redis = config.getboolean('REDIS', 'redis_enable', fallback=False)
+
         self.api_sender = APIMessageWriter(sig_event)
         self.api_sender.start()
+
+        self.redis_processor = None
+
+        if self.enable_redis is True:
+            self.redis_processor = RedisQueueReader(sig_event)
+            self.redis_processor.start()
 
     def run(self):
         self.logger.info("Enter MessageHarvester run()")
@@ -43,6 +53,9 @@ class MessageHarvester(Thread):
             sensor_message_item = self.payload_queue.get()
 
             self.api_sender.enqueue_msg(sensor_message_item)
+
+            if self.enable_redis is True:
+                self.redis_processor.inject_message(sensor_message_item)
 
             if self.thread_sleep is True:
                 time.sleep(self.thread_sleep_time)
