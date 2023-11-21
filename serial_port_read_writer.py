@@ -171,6 +171,4 @@ class SerialPortReadWriter(Thread):
 
             self.logger.error("Unknown exception trying to decode BMS params:{}".format(e))
 
-            pass
-
         return ret
