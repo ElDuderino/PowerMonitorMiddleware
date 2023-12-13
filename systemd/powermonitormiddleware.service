@@ -1,0 +1,15 @@
+[Unit]
+Description=Power Monitor Middleware
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=aretas
+ExecStart=/usr/bin/python3 /home/{user}/PowerMonitorMiddleware/backend_daemon.py
+WorkingDirectory=/home/{user}/PowerMonitorMiddleware
+Restart=on-failure
+RestartSec=10s
+ExecStop=/bin/kill -TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target
